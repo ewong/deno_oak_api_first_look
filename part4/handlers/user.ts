@@ -1,4 +1,4 @@
-import { RouteParams, Request, Response } from "https://deno.land/x/oak/mod.ts";
+import type { RouteParams, Request, Response } from "https://deno.land/x/oak@v6.2.0/mod.ts";
 import User from "../models/user.ts";
 
 // ------------- //
@@ -6,108 +6,101 @@ import User from "../models/user.ts";
 // ------------- //
 
 // create user
-export async function userCreate(
-  ctx: { request: Request; response: Response },
-) {
-  const data = await ctx.request.body();
-  if (
-    data == undefined || data.value.email == undefined ||
-    data.value.password == undefined
-  ) {
-    ctx.response.status = 400;
-    ctx.response.body = { error: "Invalid data" };
+export async function userCreate({ request, response }: { request: Request; response: Response }) {
+  const req = request.body();
+  const data = await req.value;
+  if (data == undefined || data.email == undefined || data.password == undefined) {
+    response.status = 400;
+    response.body = { error: "Invalid data" };
     return;
   }
 
-  const result = User.create(data.value.email, data.value.password);
-  ctx.response.status = result.status;
+  const result = await User.create(data.email, data.password);
+  response.status = result.status;
   if (result.error) {
-    ctx.response.body = { error: result.data };
+    response.body = { error: result.data };
     return;
   }
-  ctx.response.body = { ukey: result.data.ukey, email: result.data.email };
+  response.body = { ukey: result.data.ukey, email: result.data.email };
 }
 
 // read user
 export function userProfile(
-  ctx: { params: RouteParams; request: Request; response: Response },
+  { params, request, response }: { params: RouteParams; request: Request; response: Response },
 ) {
-  if (ctx.params == undefined || ctx.params.ukey == undefined) {
-    ctx.response.status = 400;
-    ctx.response.body = { error: "Invalid data" };
+  if (params == undefined || params.ukey == undefined) {
+    response.status = 400;
+    response.body = { error: "Invalid data" };
     return;
   }
 
   // check if user exists
-  const user = User.getByUkey(ctx.params.ukey);
+  const user = User.getByUkey(params.ukey);
   if (user == undefined) {
-    ctx.response.status = 404;
-    ctx.response.body = { error: "User not found" };
+    response.status = 404;
+    response.body = { error: "User not found" };
     return;
   }
 
-  ctx.response.status = 200;
-  ctx.response.body = { ukey: ctx.params.ukey, email: user.email };
+  response.status = 200;
+  response.body = { ukey: params.ukey, email: user.email };
 }
 
 // update user
-export async function userUpdate(
-  ctx: { params: RouteParams; request: Request; response: Response },
-) {
-  if (ctx.params == undefined || ctx.params.ukey == undefined) {
-    ctx.response.status = 400;
-    ctx.response.body = { error: "Invalid data" };
+export async function userUpdate({ params, request, response }: { params: RouteParams; request: Request; response: Response }) {
+  if (params == undefined || params.ukey == undefined) {
+    response.status = 400;
+    response.body = { error: "Invalid data" };
     return;
   }
 
   // check body
-  const data = await ctx.request.body();
-  if (data == undefined || data.value.email == undefined) {
-    ctx.response.status = 400;
-    ctx.response.body = { error: "Invalid data" };
+  const result = request.body();
+  const data = await result.value;
+  if (data == undefined || data.email == undefined) {
+    response.status = 400;
+    response.body = { error: "Invalid data" };
     return;
   }
 
   // check if user exists
-  const user = User.getByUkey(ctx.params.ukey);
+  const user = User.getByUkey(params.ukey);
   if (user == undefined) {
-    ctx.response.status = 404;
-    ctx.response.body = { error: "User not found" };
+    response.status = 404;
+    response.body = { error: "User not found" };
     return;
   }
 
   // update user
-  user.email = data.value.email;
+  user.email = data.email;
   if (user.save()) {
-    ctx.response.status = 200;
-    ctx.response.body = { ukey: ctx.params.ukey, email: user.email };
+    response.status = 200;
+    response.body = { ukey: params.ukey, email: user.email };
     return;
   }
 
-  ctx.response.status = 500;
-  ctx.response.body = { error: "Server error" };
+  response.status = 500;
+  response.body = { error: "Server error" };
 }
 
 // delete user
-export function userDelete(
-  ctx: { params: RouteParams; request: Request; response: Response },
-) {
-  if (ctx.params == undefined || ctx.params.ukey == undefined) {
-    ctx.response.status = 400;
-    ctx.response.body = { error: "Invalid data" };
+export function userDelete({params, request,response}: { params: RouteParams; request: Request; response: Response }) {
+  if (params == undefined || params.ukey == undefined) {
+    response.status = 400;
+    response.body = { error: "Invalid data" };
     return;
   }
 
   // check if user exists
-  const user = User.getByUkey(ctx.params.ukey);
+  const user = User.getByUkey(params.ukey);
   if (user == undefined) {
-    ctx.response.status = 404;
-    ctx.response.body = { error: "User not found" };
+    response.status = 404;
+    response.body = { error: "User not found" };
     return;
   }
 
   // delete user
   user.delete();
-  ctx.response.status = 200;
-  ctx.response.body = {};
+  response.status = 200;
+  response.body = {};
 }

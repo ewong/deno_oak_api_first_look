@@ -1,4 +1,4 @@
-import { Request, Response } from "https://deno.land/x/oak/mod.ts";
+import { Request, Response } from "https://deno.land/x/oak@v6.2.0/mod.ts";
 
 export async function timer(ctx: { response: Response }, next: any) {
   const start = Date.now();

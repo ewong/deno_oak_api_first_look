@@ -1,5 +1,5 @@
-import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+import { v4 } from "https://deno.land/std@0.70.0/uuid/mod.ts";
 
 export default class User {
   ukey?: string;

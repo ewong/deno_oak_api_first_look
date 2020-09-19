@@ -1,5 +1,5 @@
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import "https://deno.land/x/dotenv/load.ts";
+import { Application, Router } from "https://deno.land/x/oak@v6.2.0/mod.ts";
+import "https://deno.land/x/dotenv@v0.5.0/load.ts";
 
 import {
   userCreate,
@@ -22,3 +22,4 @@ app.use(router.allowedMethods());
 
 // listen
 app.listen({ port: parseInt(Deno.env.get("PORT")!) });
+console.log(`Server started at port ${Deno.env.get("PORT")!}`);

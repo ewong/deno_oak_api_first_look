@@ -1,5 +1,5 @@
-import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+import { v4 } from "https://deno.land/std@0.70.0/uuid/mod.ts";
 
 export default class User {
   ukey?: string;
@@ -13,10 +13,10 @@ export default class User {
   }
 
   // create
-  static create(
+  static async create(
     email: string,
     password: string,
-  ): { data: any; error: boolean; status: number } {
+  ): Promise<{ data: any; error: boolean; status: number }> {
     // check if user exists
     if (emailIndex.get(email) != undefined) {
       return { data: "User already exists", error: true, status: 400 };
@@ -25,8 +25,8 @@ export default class User {
     // set the user
     const user = new User(email);
     user.ukey = v4.generate();
-    const salt = bcrypt.gensalt(8);
-    user.password = bcrypt.hashpw(password, salt);
+    const salt = await bcrypt.genSalt(8);
+    user.password = await bcrypt.hash(password, salt);
     user.createdAt = new Date();
     user.updatedAt = new Date();
 

@@ -1,5 +1,5 @@
-import { RouteParams, Request, Response } from "https://deno.land/x/oak/mod.ts";
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import { RouteParams, Request, Response } from "https://deno.land/x/oak@v6.2.0/mod.ts";
+import { v4 } from "https://deno.land/std@0.70.0/uuid/mod.ts";
 
 // ------------- //
 // CRUD handlers //
